@@ -3,23 +3,29 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-# ✅ CORS RESTRINGIDO (frontend autorizado)
+# ==============================
+# 🔒 CORS SEGURO (PRODUCCIÓN)
+# ==============================
 CORS(
     app,
     resources={
         r"/calcular-densidad": {
             "origins": [
-                "https://easy-plant-frontend.up.railway.app",  # PRODUCCIÓN
-                "http://localhost:5000",                      # LOCAL
-                "http://127.0.0.1:5000"                        # LOCAL
-            ]
+                "http://localhost:5000",
+                "http://127.0.0.1:5000",
+                "https://easy-plant-frontend.up.railway.app"
+            ],
+            "methods": ["POST"],
+            "allow_headers": ["Content-Type"]
         }
     }
 )
 
-# ===============================
-# Tabla 1: factores de conversión
-# ===============================
+# ==============================
+# 📊 TABLAS DE CÁLCULO
+# ==============================
+
+# Tabla 1: factores de conversión (°F → factor)
 factores = {
     70: 0.917, 71: 1.01, 72: 1.102, 73: 1.195, 74: 1.288,
     75: 1.38, 76: 1.473, 77: 1.567, 78: 1.66, 79: 1.753,
@@ -30,9 +36,7 @@ factores = {
     100: 3.748,
 }
 
-# ===================================
-# Tabla 2: API observado → densidad
-# ===================================
+# Tabla 2: API observado → densidad (kg/gal)
 tabla_api = {
     40.0: 3.12, 40.1: 3.118, 40.2: 3.117, 40.3: 3.115, 40.4: 3.113,
     40.5: 3.111, 40.6: 3.109, 40.7: 3.107, 40.8: 3.106, 40.9: 3.104,
@@ -59,15 +63,15 @@ tabla_api = {
     51.0: 2.932,
 }
 
-# ===============================
-# Utilidad
-# ===============================
+# ==============================
+# 🔢 UTILIDAD
+# ==============================
 def truncar_1_decimal(valor: float) -> float:
     return int(valor * 10) / 10
 
-# ===============================
-# Endpoint principal
-# ===============================
+# ==============================
+# 🚀 ENDPOINT PRINCIPAL
+# ==============================
 @app.route("/calcular-densidad", methods=["POST"])
 def calcular_densidad():
     data = request.get_json()
@@ -99,12 +103,15 @@ def calcular_densidad():
         "densidad_kg_gal": densidad
     })
 
-# ===============================
-# Health check
-# ===============================
+# ==============================
+# ❤️ HEALTH CHECK
+# ==============================
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
 
+# ==============================
+# ▶️ LOCAL
+# ==============================
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
