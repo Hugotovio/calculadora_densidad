@@ -1,30 +1,10 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
-import os  # para obtener el puerto de Railway
+from flask_cors import CORS   # 👈 AÑADIDO
 
 app = Flask(__name__)
+CORS(app)   # 👈 AÑADIDO (habilita CORS para todo)
 
-# ==============================
-# 🔒 CORS SEGURO (PRODUCCIÓN)
-# ==============================
-CORS(
-    app,
-    resources={
-        r"/calcular-densidad": {
-            "origins": [
-                "http://localhost:5000",
-                "http://127.0.0.1:5000",
-                "https://easy-plant-frontend.up.railway.app"
-            ],
-            "methods": ["POST"],
-            "allow_headers": ["Content-Type"]
-        }
-    }
-)
-
-# ==============================
-# 📊 TABLAS DE CÁLCULO
-# ==============================
+# Tabla 1: factores de conversión (°F → factor)
 factores = {
     70: 0.917, 71: 1.01, 72: 1.102, 73: 1.195, 74: 1.288,
     75: 1.38, 76: 1.473, 77: 1.567, 78: 1.66, 79: 1.753,
@@ -35,6 +15,7 @@ factores = {
     100: 3.748,
 }
 
+# Tabla 2: API observado → densidad (kg/gal)
 tabla_api = {
     40.0: 3.12, 40.1: 3.118, 40.2: 3.117, 40.3: 3.115, 40.4: 3.113,
     40.5: 3.111, 40.6: 3.109, 40.7: 3.107, 40.8: 3.106, 40.9: 3.104,
@@ -100,5 +81,4 @@ def health():
     return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    PORT = int(os.environ.get("PORT", 3000))  # Railway asigna el puerto
-    app.run(host="0.0.0.0", port=PORT)
+    app.run(host="0.0.0.0", port=3000)
