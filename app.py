@@ -14,7 +14,7 @@ CORS(
             "origins": [
                 "http://localhost:5000",
                 "http://127.0.0.1:5000",
-                "https://web-production-0153.up.railway.app"
+                "https://easy-plant-frontend.up.railway.app"
             ],
             "methods": ["POST"],
             "allow_headers": ["Content-Type"]
@@ -96,11 +96,9 @@ def calcular_densidad():
     })
 
 @app.route("/health", methods=["GET"])
-def health(): lo
+def health():
     return jsonify({"status": "ok"})
 
-# ==============================
-# ▶️ LOCAL
-# ==============================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    PORT = int(os.environ.get("PORT", 3000))  # Railway asigna el puerto
+    app.run(host="0.0.0.0", port=PORT)
