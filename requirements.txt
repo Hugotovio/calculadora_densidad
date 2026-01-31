@@ -1,2 +1,5 @@
-flask
-gunicorn
+Flask==2.3.3
+flask-cors==3.1.2
+gunicorn==24.1.1
+
+
